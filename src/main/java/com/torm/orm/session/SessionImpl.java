@@ -29,7 +29,7 @@ public class SessionImpl implements Session {
     public <T, ID> T get(Class<T> entityClass, ID id) {
         String idFieldName = EntityUtil.getIdFieldName(entityClass);
         Criteria criteria = this.createCriteria(entityClass);
-        criteria.add(Logical.and(idFieldName).eq(id));
+        criteria.addWhere(Logical.and(idFieldName).eq(id));
         return (T) criteria.uniqueResult();
     }
 

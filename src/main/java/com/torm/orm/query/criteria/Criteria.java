@@ -19,11 +19,13 @@ public interface Criteria {
 
     Criteria addSelection(String fieldName);
 
-    Criteria add(Criterion criterion);
+    Criteria addSelection(Projection projection);
 
-    Criteria addOrder(Order order);
+    Criteria addWhere(Criterion criterion);
 
-    Criteria setProjection(Projection projection);
+    Criteria addGroupBy(String fieldName);
+
+    Criteria addOrderBy(Order order);
 
     Criteria setMaxResults(int limit);
 

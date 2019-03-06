@@ -22,13 +22,13 @@ public class CriteriaImpl implements Criteria {
     private Class entityClass;
     private NamedParamStatement statement;
 
-    private String genericQuery = "SELECT {selectColumns} FROM {tableName}{where}{groupBy}{having}{orderBy}{limit}{offset}";
-    private String selectColumns = "";
+    private StringBuilder sqlQuery = new StringBuilder();
+    private StringBuilder selectColumns = new StringBuilder();
     private String tableName = "";
-    private StringBuilder where = new StringBuilder(" WHERE ");
-    private String groupBy = "";
-    private String having = "";
-    private String orderBy = "";
+    private StringBuilder where = new StringBuilder();
+    private StringBuilder groupBy = new StringBuilder();
+    private StringBuilder having = new StringBuilder();
+    private StringBuilder orderBy = new StringBuilder();
     private String limit = "";
     private String offset = "";
     private boolean isMappedToEntity = true;
@@ -38,13 +38,12 @@ public class CriteriaImpl implements Criteria {
     public CriteriaImpl(Connection connection, Class entityClass) {
         this.connection = connection;
         this.entityClass = entityClass;
-        this.selectColumns = "*";
-        this.tableName = EntityUtil.getTableName(entityClass);
+        tableName = EntityUtil.getTableName(entityClass);
     }
 
     @Override
     public Class getEntityClass() {
-        return this.entityClass;
+        return entityClass;
     }
 
     @Override
@@ -60,7 +59,7 @@ public class CriteriaImpl implements Criteria {
             resultSet = this.executeQuery();
             while (resultSet.next()) {
                 if (isMappedToEntity) {
-                    resultList.add(EntityMapper.of(this.entityClass).toEntity(resultSet));
+                    resultList.add(EntityMapper.of(entityClass).toEntity(resultSet));
                 } else {
                     resultList.add(resultSet.getObject(1));
                 }
@@ -87,7 +86,7 @@ public class CriteriaImpl implements Criteria {
 
             if (resultSet.next()) {
                 if (isMappedToEntity) {
-                    object = EntityMapper.of(this.entityClass).toEntity(resultSet);
+                    object = EntityMapper.of(entityClass).toEntity(resultSet);
                 } else {
                     object = resultSet.getObject(1);
                 }
@@ -103,36 +102,60 @@ public class CriteriaImpl implements Criteria {
 
     @Override
     public Criteria addSelection(String fieldName) {
-        if (this.selectColumns.equals("*")) {
-            this.selectColumns = "";
-        }
-        if (!this.selectColumns.equals("*") && !this.selectColumns.isEmpty()) {
-            this.selectColumns += ", ";
+        if (selectColumns.length() != 0) {
+            selectColumns.append(", ");
         }
 
-        this.selectColumns += EntityUtil.getColumnName(entityClass, fieldName);
+//        lấy column name dựa trên tên thuộc tính của entity
+        String columnName = EntityUtil.getColumnName(entityClass, fieldName);
+        selectColumns.append(columnName);
         return this;
     }
 
     @Override
-    public Criteria add(Criterion criterion) {
-        if (where.toString().equals(" WHERE ")) {
-            criterion.setPrefixLogical("");
+    public Criteria addSelection(Projection projection) {
+        if (selectColumns.length() != 0) {
+            selectColumns.append(", ");
+        }
+        selectColumns.append(projection.toSqlString(this));
+
+        isMappedToEntity = false;
+        return this;
+    }
+
+    @Override
+    public Criteria addWhere(Criterion criterion) {
+        if (where.length() == 0) {
+            where.append(" WHERE");
+            criterion.setPrefixLogical(" ");
         }
         where.append(criterion.toSqlString(this));
         return this;
     }
 
     @Override
-    public Criteria addOrder(Order order) {
-        orderBy = order.toSqlString();
+    public Criteria addGroupBy(String fieldName) {
+        if (groupBy.length() == 0) {
+            groupBy.append(" GROUP BY ");
+        } else {
+            groupBy.append(", ");
+        }
+//        lấy column name dựa trên tên thuộc tính của entity
+        String columnName = EntityUtil.getColumnName(entityClass, fieldName);
+        groupBy.append(columnName);
+
+        isMappedToEntity = false;
         return this;
     }
 
     @Override
-    public Criteria setProjection(Projection projection) {
-        selectColumns = projection.toSqlString(this);
-        this.isMappedToEntity = false;
+    public Criteria addOrderBy(Order order) {
+        if (orderBy.length() == 0) {
+            orderBy.append(" ORDER BY");
+        } else {
+            orderBy.append(", ");
+        }
+        orderBy.append(order.toSqlString(this));
         return this;
     }
 
@@ -156,24 +179,26 @@ public class CriteriaImpl implements Criteria {
         }
     }
 
-    private String handleGenericQuery() {
-        this.genericQuery = genericQuery.replace("{selectColumns}", selectColumns);
-        this.genericQuery = genericQuery.replace("{tableName}", tableName);
-        this.genericQuery = genericQuery.replace("{where}", where.toString().equals(" WHERE ") ? "" : where);
-        this.genericQuery = genericQuery.replace("{groupBy}", groupBy);
-        this.genericQuery = genericQuery.replace("{having}", having);
-        this.genericQuery = genericQuery.replace("{orderBy}", orderBy);
-        this.genericQuery = genericQuery.replace("{limit}", limit);
-        this.genericQuery = genericQuery.replace("{offset}", offset);
-        return this.genericQuery;
+    private String buildSqlQuery() {
+        sqlQuery.append("SELECT ");
+        sqlQuery.append(selectColumns.length() == 0 ? "*" : selectColumns);
+        sqlQuery.append(" FROM ");
+        sqlQuery.append(tableName);
+        sqlQuery.append(where);
+        sqlQuery.append(groupBy);
+        sqlQuery.append(having);
+        sqlQuery.append(orderBy);
+        sqlQuery.append(limit);
+        sqlQuery.append(offset);
+        return sqlQuery.toString();
     }
 
     private ResultSet executeQuery() throws SQLException {
         ResultSet resultSet;
-        String sql = this.handleGenericQuery();
-        this.statement = new NamedParamStatement(connection, sql);
-        this.statement.setNamedParamMap(namedParamMap);
-        resultSet = this.statement.executeQuery();
+        String sql = this.buildSqlQuery();
+        statement = new NamedParamStatement(connection, sql);
+        statement.setNamedParamMap(namedParamMap);
+        resultSet = statement.executeQuery();
         return resultSet;
     }
 }

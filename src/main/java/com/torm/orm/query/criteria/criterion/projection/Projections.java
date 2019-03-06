@@ -5,31 +5,35 @@ public class Projections {
         return new RowCountProjection();
     }
 
-    public static CountProjection count(String propertyName) {
-        return new CountProjection(propertyName);
+    public static Projection count(String propertyName) {
+        return new AggregateProjection("count", propertyName);
     }
 
-    public static CountProjection countDistinct(String propertyName) {
-        return (new CountProjection(propertyName)).setDistinct();
+    public static Projection countDistinct(String propertyName) {
+        return new AggregateProjection("count", propertyName).setDistinct();
     }
 
-    public static AggregateProjection max(String propertyName) {
+    public static Projection max(String propertyName) {
         return new AggregateProjection("max", propertyName);
     }
 
-    public static AggregateProjection min(String propertyName) {
+    public static Projection min(String propertyName) {
         return new AggregateProjection("min", propertyName);
     }
 
-    public static AggregateProjection avg(String propertyName) {
-        return new AvgProjection(propertyName);
+    public static Projection avg(String propertyName) {
+        return new AggregateProjection("avg", propertyName);
     }
 
-    public static AggregateProjection sum(String propertyName) {
+    public static Projection avgDistinct(String propertyName) {
+        return new AggregateProjection("avg", propertyName).setDistinct();
+    }
+
+    public static Projection sum(String propertyName) {
         return new AggregateProjection("sum", propertyName);
     }
 
-    public static Projection alias(Projection projection, String alias) {
-        return new AliasedProjection(projection, alias);
+    public static Projection sumDistinct(String propertyName) {
+        return new AggregateProjection("sum", propertyName).setDistinct();
     }
 }

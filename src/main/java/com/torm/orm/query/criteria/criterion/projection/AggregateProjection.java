@@ -3,7 +3,7 @@ package com.torm.orm.query.criteria.criterion.projection;
 import com.torm.orm.query.criteria.Criteria;
 import com.torm.orm.util.EntityUtil;
 
-public class AggregateProjection implements Projection {
+public class AggregateProjection extends AbstractAggregate implements Projection {
     private final String functionName;
     protected final String propertyName;
 
@@ -13,7 +13,7 @@ public class AggregateProjection implements Projection {
     }
 
     @Override
-    public String toSqlString(Criteria criteria) {
+    public String toAggregateString(Criteria criteria) {
 //        lấy tên cột tương ứng với tên thuộc tính của entity
         String columnName = EntityUtil.getColumnName(criteria.getEntityClass(), propertyName);
 

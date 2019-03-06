@@ -36,7 +36,7 @@ public class UserDao {
         try {
 //        set properties search
             if (criterionList != null) {
-                criterionList.forEach(criterion -> criteria.add(criterion));
+                criterionList.forEach(criterion -> criteria.addWhere(criterion));
             }
             userEntityList = criteria.list();
         } catch (Exception e) {
@@ -69,7 +69,7 @@ public class UserDao {
         Long rowCount = 0L;
 
         try {
-            cr.setProjection(Projections.rowCount());
+            cr.addSelection(Projections.rowCount());
             rowCount = (Long) cr.uniqueResult();
         } catch (Exception e) {
             e.printStackTrace();

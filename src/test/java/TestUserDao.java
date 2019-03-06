@@ -1,5 +1,3 @@
-package dao;
-
 import com.torm.orm.query.criteria.criterion.Criterion;
 import com.torm.orm.query.criteria.criterion.Logical;
 import com.torm.orm.query.criteria.criterion.MatchMode;

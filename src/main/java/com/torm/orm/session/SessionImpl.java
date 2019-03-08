@@ -1,6 +1,8 @@
 package com.torm.orm.session;
 
+import com.torm.orm.annotation.Entity;
 import com.torm.orm.builder.StatementBuilder;
+import com.torm.orm.exception.IdentifierGenerationException;
 import com.torm.orm.query.criteria.Criteria;
 import com.torm.orm.query.criteria.CriteriaImpl;
 import com.torm.orm.query.criteria.criterion.Logical;
@@ -37,6 +39,14 @@ public class SessionImpl implements Session {
     @Override
     public void save(Object entity) throws SQLException {
         Class entityClass = entity.getClass();
+
+//        Kiểm tra id có tự tăng hay không
+        boolean isAutoIncrement = EntityUtil.isAutoIncrement(entityClass);
+        Object idData = EntityUtil.getIdFieldData(entityClass, entity);
+        if (isAutoIncrement && idData != null) {
+            throw new IdentifierGenerationException(entityClass.getName() + ": Id must be null because it is auto increment");
+        }
+
         String sql = StatementBuilder.buildInsertStatement(entity.getClass());
         statement = new NamedParamStatement(connection, sql);
         this.setEntityToStatement(entity, statement);

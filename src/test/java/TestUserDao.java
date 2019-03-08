@@ -47,6 +47,7 @@ public class TestUserDao {
     @Test
     public void save() {
         UserEntity userEntity = new UserEntity();
+        userEntity.setId(100);
         userEntity.setUsername("haimy");
         userEntity.setFullName("Tran Hai My");
         userEntity.setRoleId("USER");

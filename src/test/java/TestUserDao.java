@@ -24,8 +24,8 @@ public class TestUserDao {
 //        Sql: SELECT * FROM user WHERE (username LIKE '%thanh' OR id BETWEEN 1 AND 3) AND full_name IS NOT NULL
         List<Criterion> criterionList = new ArrayList<>();
 
-        GroupExpression groupExpression = Logical.noPrefixGroup();
-        groupExpression.add(Logical.noPrefix("username").like("thanh", MatchMode.START));
+        GroupExpression groupExpression = Logical.andGroup();
+        groupExpression.add(Logical.and("username").like("thanh", MatchMode.START));
         groupExpression.add(Logical.or("id").between(2, 3));
 
         criterionList.add(groupExpression);

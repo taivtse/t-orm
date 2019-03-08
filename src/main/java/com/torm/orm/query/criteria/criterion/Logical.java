@@ -14,19 +14,11 @@ public class Logical {
         return new Restrictions(Logical.prefixOr, propertyName);
     }
 
-    public static Restrictions noPrefix(String propertyName) {
-        return new Restrictions(Logical.prefixAnd, propertyName);
-    }
-
     public static GroupExpression andGroup() {
         return new GroupExpression(Logical.prefixAnd);
     }
 
     public static GroupExpression orGroup() {
         return new GroupExpression(Logical.prefixOr);
-    }
-
-    public static GroupExpression noPrefixGroup() {
-        return new GroupExpression("");
     }
 }

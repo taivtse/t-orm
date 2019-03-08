@@ -10,11 +10,21 @@ import java.util.List;
 
 public class TestCriteria {
     @Test
-    public void addSelection() {
+    public void addSelectionMappedToArray() {
+        Session session = SessionFactory.openSession();
+        Criteria criteria = session.createCriteria(UserEntity.class);
+        criteria.addSelection(Projections.rowCount());
+        criteria.addSelection(Projections.min("id"));
+        criteria.addSelection(Projections.max("id"));
+        List<Object[]> userEntityList = criteria.list();
+        session.close();
+    }
+
+    @Test
+    public void addSelectionMappedToEntity() {
         Session session = SessionFactory.openSession();
         Criteria criteria = session.createCriteria(UserEntity.class);
         criteria.addSelection("fullName");
-        criteria.addSelection("password");
         criteria.addSelection("roleId");
         List<UserEntity> userEntityList = criteria.list();
         session.close();
@@ -26,7 +36,7 @@ public class TestCriteria {
         Criteria criteria = session.createCriteria(UserEntity.class);
         criteria.addSelection(Projections.max("id").as("idId"));
         criteria.addGroupBy("roleId");
-        List userEntityList = criteria.list();
+        List selectionList = criteria.list();
         session.close();
     }
 

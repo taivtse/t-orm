@@ -1,11 +1,11 @@
 package com.torm.orm.query.sqlquery;
 
+import com.torm.orm.mapper.ArrayMapper;
 import com.torm.orm.query.statement.NamedParamStatement;
 import com.torm.orm.session.util.CloseExecutorUtil;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,17 +26,8 @@ public class SqlQueryImpl implements SqlQuery {
         List<Object[]> resultList = new ArrayList<>();
         try {
             ResultSet resultSet = this.statement.executeQuery();
-
-            List<Object> row = new ArrayList<>();
-            ResultSetMetaData metaData = resultSet.getMetaData();
-            int columnsCount = metaData.getColumnCount();
-
             while (resultSet.next()) {
-                for (int i = 1; i <= columnsCount; i++) {
-                    row.add(resultSet.getObject(i));
-                }
-
-                resultList.add(row.toArray());
+                resultList.add(ArrayMapper.toArray(resultSet));
             }
         } catch (SQLException e) {
             e.printStackTrace();

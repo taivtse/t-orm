@@ -1,5 +1,6 @@
 package com.torm.orm.query.criteria;
 
+import com.torm.orm.mapper.ArrayMapper;
 import com.torm.orm.mapper.EntityMapper;
 import com.torm.orm.query.criteria.criterion.Criterion;
 import com.torm.orm.query.criteria.criterion.NamedParam;
@@ -61,7 +62,7 @@ public class CriteriaImpl implements Criteria {
                 if (isMappedToEntity) {
                     resultList.add(EntityMapper.of(entityClass).toEntity(resultSet));
                 } else {
-                    resultList.add(resultSet.getObject(1));
+                    resultList.add(ArrayMapper.toArray(resultSet));
                 }
             }
 
@@ -88,7 +89,7 @@ public class CriteriaImpl implements Criteria {
                 if (isMappedToEntity) {
                     object = EntityMapper.of(entityClass).toEntity(resultSet);
                 } else {
-                    object = resultSet.getObject(1);
+                    object = ArrayMapper.toArray(resultSet);
                 }
             }
         } catch (Exception e) {

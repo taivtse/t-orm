@@ -13,6 +13,7 @@ import com.torm.orm.transaction.TransactionImpl;
 import com.torm.orm.util.EntityUtil;
 import com.torm.orm.util.ObjectAccessUtil;
 
+import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -26,15 +27,15 @@ public class SessionImpl implements Session {
     }
 
     @Override
-    public <T, ID> T get(Class<T> entityClass, ID id) {
+    public Object get(Class entityClass, Serializable id) {
         String idFieldName = EntityUtil.getIdFieldName(entityClass);
         Criteria criteria = this.createCriteria(entityClass);
         criteria.addWhere(Logical.and(idFieldName).eq(id));
-        return (T) criteria.uniqueResult();
+        return criteria.uniqueResult();
     }
 
     @Override
-    public <T> T save(T entity) throws SQLException {
+    public void save(Object entity) throws SQLException {
         Class entityClass = entity.getClass();
         String sql = StatementBuilder.buildInsertStatement(entity.getClass());
         statement = new NamedParamStatement(connection, sql);
@@ -42,18 +43,25 @@ public class SessionImpl implements Session {
         Long generateId = statement.executeInsert();
 
 //            lấy lại giá trị của entity trong trường hợp có những giá trị do trigger sinh ra.
+        Object insertedEntity;
         if (generateId != null) {
-            entity = (T) this.get(entityClass, generateId);
+            insertedEntity = this.get(entityClass, generateId);
         } else {
-            Object id = EntityUtil.getIdFieldData(entityClass, entity);
-            entity = (T) this.get(entityClass, id);
+            Serializable id = (Serializable) EntityUtil.getIdFieldData(entityClass, entity);
+            insertedEntity = this.get(entityClass, id);
         }
 
-        return entity;
+//        gán các giá trị mới vào entity
+        try {
+            ObjectAccessUtil.copyProperties(insertedEntity, entity);
+        } catch (ReflectiveOperationException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
-    public <T> T update(T entity) throws SQLException {
+    public void update(Object entity) throws SQLException {
         Class entityClass = entity.getClass();
         String sql = StatementBuilder.buildUpdateStatement(entity.getClass());
         statement = new NamedParamStatement(connection, sql);
@@ -61,16 +69,23 @@ public class SessionImpl implements Session {
         Integer rowsEffect = statement.executeUpdate();
 
 //            lấy lại giá trị của entity trong trường hợp có những giá trị do trigger sinh ra.
+        Object updatedEntity = null;
         if (rowsEffect > 0) {
-            Object id = EntityUtil.getIdFieldData(entityClass, entity);
-            entity = (T) this.get(entityClass, id);
+            Serializable id = (Serializable) EntityUtil.getIdFieldData(entityClass, entity);
+            updatedEntity = this.get(entityClass, id);
         }
 
-        return entity;
+//        gán các giá trị mới vào entity
+        try {
+            ObjectAccessUtil.copyProperties(updatedEntity, entity);
+        } catch (ReflectiveOperationException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
-    public <T> void delete(T entity) throws SQLException {
+    public void delete(Object entity) throws SQLException {
         Class entityClass = entity.getClass();
 
 //        lấy tên của field id và giá trị của id để set param cho câu statement
@@ -89,7 +104,7 @@ public class SessionImpl implements Session {
     }
 
     @Override
-    public <T> Criteria createCriteria(Class<T> entityClass) {
+    public Criteria createCriteria(Class entityClass) {
         return new CriteriaImpl(connection, entityClass);
     }
 

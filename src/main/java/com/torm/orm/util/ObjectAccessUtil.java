@@ -16,7 +16,7 @@ public class ObjectAccessUtil {
         return getterMethod.invoke(object);
     }
 
-    public static void setFieldData(Object object, Object fieldValue, Field field) throws ReflectiveOperationException {
+    public static void setFieldData(Object object, Object fieldData, Field field) throws ReflectiveOperationException {
         String fieldName = field.getName();
 //            upper case the first letter of field name
         fieldName = fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1);
@@ -26,10 +26,19 @@ public class ObjectAccessUtil {
 
 //            get setter method and invoke
         Method setterMethod = object.getClass().getMethod(setterMethodName, field.getType());
-        setterMethod.invoke(object, fieldValue);
+        setterMethod.invoke(object, fieldData);
     }
 
     public static Field getFieldByName(Class clazz, String fieldName) throws NoSuchFieldException {
         return clazz.getDeclaredField(fieldName);
+    }
+
+    public static void copyProperties(Object source, Object destination) throws ReflectiveOperationException {
+        Field[] fields = source.getClass().getDeclaredFields();
+
+        for (Field field : fields) {
+            Object fieldData = getFieldData(source, field);
+            setFieldData(destination, fieldData, field);
+        }
     }
 }

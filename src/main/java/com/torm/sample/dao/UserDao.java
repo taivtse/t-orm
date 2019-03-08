@@ -85,7 +85,7 @@ public class UserDao {
         Transaction transaction = session.beginTransaction();
 
         try {
-            entity = session.save(entity);
+            session.save(entity);
             transaction.commit();
         } catch (SQLException e) {
             transaction.rollback();
@@ -102,7 +102,7 @@ public class UserDao {
         Transaction transaction = session.beginTransaction();
 
         try {
-            entity = session.update(entity);
+            session.update(entity);
             transaction.commit();
         } catch (SQLException e) {
             transaction.rollback();

@@ -4,20 +4,21 @@ import com.torm.orm.query.criteria.Criteria;
 import com.torm.orm.query.sqlquery.SqlQuery;
 import com.torm.orm.transaction.Transaction;
 
+import java.io.Serializable;
 import java.sql.SQLException;
 
 public interface Session {
-    <T, ID> T get(Class<T> entityClass, ID id);
+    <T> T get(Class<T> entityClass, Serializable id);
 
-    <T> T save(T entity) throws SQLException;
+    void save(Object entity) throws SQLException;
 
-    <T> T update(T entity) throws SQLException;
+    void update(Object entity) throws SQLException;
 
-    <T> void delete(T entity) throws SQLException;
+    void delete(Object entity) throws SQLException;
 
     SqlQuery createSQLQuery(String sql) throws SQLException;
 
-    <T> Criteria createCriteria(Class<T> entityClass);
+    Criteria createCriteria(Class entityClass);
 
     Transaction beginTransaction();
 

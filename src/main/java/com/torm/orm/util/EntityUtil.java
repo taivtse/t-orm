@@ -30,19 +30,15 @@ public class EntityUtil {
     }
 
     public static Object getIdFieldData(Class<?> entityClass, Object entity) {
-        String idFieldName = getIdFieldName(entityClass);
         try {
-            Field idField = entityClass.getDeclaredField(idFieldName);
-            boolean accessible = idField.isAccessible();
-            idField.setAccessible(true);
-
-            Object fieldData = idField.get(entity);
-            idField.setAccessible(accessible);
-
-            return fieldData;
+            String idFieldName = getIdFieldName(entityClass);
+            Field idField = ObjectAccessUtil.getFieldByName(entityClass, idFieldName);
+            return ObjectAccessUtil.getFieldData(entity, idField);
         } catch (NoSuchFieldException e) {
             e.printStackTrace();
         } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (ReflectiveOperationException e) {
             e.printStackTrace();
         }
         return null;

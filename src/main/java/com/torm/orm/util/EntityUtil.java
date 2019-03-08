@@ -15,7 +15,7 @@ public class EntityUtil {
             Field idField = ObjectAccessUtil.getFieldByName(entityClass, idFieldName);
             return idField.getAnnotation(Id.class).autoIncrement();
         } catch (NoSuchFieldException e) {
-            throw new TormException(e);
+            throw new TormException("No field with name: " + idFieldName, e);
         }
     }
 

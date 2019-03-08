@@ -125,7 +125,7 @@ public class CriteriaImpl implements Criteria {
     }
 
     @Override
-    public Criteria addWhere(Criterion criterion) {
+    public Criteria addCriterion(Criterion criterion) {
         if (where.length() == 0) {
             where.append(" WHERE");
             criterion.setPrefixLogical(" ");
@@ -150,7 +150,7 @@ public class CriteriaImpl implements Criteria {
     }
 
     @Override
-    public Criteria addOrderBy(Order order) {
+    public Criteria addOrder(Order order) {
         if (orderBy.length() == 0) {
             orderBy.append(" ORDER BY");
         } else {

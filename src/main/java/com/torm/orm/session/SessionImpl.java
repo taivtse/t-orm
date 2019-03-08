@@ -1,6 +1,5 @@
 package com.torm.orm.session;
 
-import com.torm.orm.annotation.Entity;
 import com.torm.orm.builder.StatementBuilder;
 import com.torm.orm.exception.IdentifierGenerationException;
 import com.torm.orm.query.criteria.Criteria;
@@ -32,7 +31,7 @@ public class SessionImpl implements Session {
     public Object get(Class entityClass, Serializable id) {
         String idFieldName = EntityUtil.getIdFieldName(entityClass);
         Criteria criteria = this.createCriteria(entityClass);
-        criteria.addWhere(Logical.and(idFieldName).eq(id));
+        criteria.addCriterion(Logical.and(idFieldName).eq(id));
         return criteria.uniqueResult();
     }
 

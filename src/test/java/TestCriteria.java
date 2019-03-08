@@ -44,7 +44,7 @@ public class TestCriteria {
     public void addOrder() {
         Session session = SessionFactory.openSession();
         Criteria criteria = session.createCriteria(UserEntity.class);
-        criteria.addOrderBy(Order.asc("roleId"));
+        criteria.addOrder(Order.asc("roleId"));
         List<UserEntity> userEntityList = criteria.list();
         session.close();
     }

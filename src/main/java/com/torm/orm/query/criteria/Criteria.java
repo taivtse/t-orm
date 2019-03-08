@@ -21,11 +21,11 @@ public interface Criteria {
 
     Criteria addSelection(Projection projection);
 
-    Criteria addWhere(Criterion criterion);
+    Criteria addCriterion(Criterion criterion);
 
     Criteria addGroupBy(String fieldName);
 
-    Criteria addOrderBy(Order order);
+    Criteria addOrder(Order order);
 
     Criteria setMaxResults(int limit);
 

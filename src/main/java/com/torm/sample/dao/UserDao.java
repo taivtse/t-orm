@@ -36,7 +36,7 @@ public class UserDao {
         try {
 //        set properties search
             if (criterionList != null) {
-                criterionList.forEach(criterion -> criteria.addWhere(criterion));
+                criterionList.forEach(criterion -> criteria.addCriterion(criterion));
             }
             userEntityList = criteria.list();
         } catch (Exception e) {

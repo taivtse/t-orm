@@ -16,7 +16,7 @@ public class TestCriteria {
         criteria.addSelection(Projections.rowCount());
         criteria.addSelection(Projections.min("id"));
         criteria.addSelection(Projections.max("id"));
-        List<Object[]> userEntityList = criteria.list();
+        List<Object[]> resultList = criteria.list();
         session.close();
     }
 
@@ -34,7 +34,7 @@ public class TestCriteria {
     public void addSelectionGroupBy() {
         Session session = SessionFactory.openSession();
         Criteria criteria = session.createCriteria(UserEntity.class);
-        criteria.addSelection(Projections.max("id").as("idId"));
+        criteria.addSelection(Projections.max("id").as("user_id"));
         criteria.addGroupBy("roleId");
         List selectionList = criteria.list();
         session.close();

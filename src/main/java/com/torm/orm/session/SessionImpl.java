@@ -2,6 +2,7 @@ package com.torm.orm.session;
 
 import com.torm.orm.builder.StatementBuilder;
 import com.torm.orm.exception.IdentifierGenerationException;
+import com.torm.orm.exception.TormException;
 import com.torm.orm.query.criteria.Criteria;
 import com.torm.orm.query.criteria.CriteriaImpl;
 import com.torm.orm.query.criteria.criterion.Logical;
@@ -64,8 +65,7 @@ public class SessionImpl implements Session {
         try {
             ObjectAccessUtil.copyProperties(insertedEntity, entity);
         } catch (ReflectiveOperationException e) {
-            e.printStackTrace();
-            throw new RuntimeException(e);
+            throw new TormException(e);
         }
     }
 
@@ -88,8 +88,7 @@ public class SessionImpl implements Session {
         try {
             ObjectAccessUtil.copyProperties(updatedEntity, entity);
         } catch (ReflectiveOperationException e) {
-            e.printStackTrace();
-            throw new RuntimeException(e);
+            throw new TormException(e);
         }
     }
 
@@ -130,7 +129,7 @@ public class SessionImpl implements Session {
             }
             CloseExecutorUtil.closeConnection(connection);
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new TormException(e);
         }
     }
 

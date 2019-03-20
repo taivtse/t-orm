@@ -1,5 +1,7 @@
 package com.torm.orm.session;
 
+import com.torm.orm.exception.TormException;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -16,7 +18,7 @@ public class SessionFactory {
         try {
             Class.forName(DB_DRIVER);
         } catch (ClassNotFoundException e) {
-            e.printStackTrace();
+            throw new TormException(e);
         }
     }
 
@@ -27,8 +29,7 @@ public class SessionFactory {
 
             return new SessionImpl(connection);
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new TormException(e);
         }
-        return null;
     }
 }

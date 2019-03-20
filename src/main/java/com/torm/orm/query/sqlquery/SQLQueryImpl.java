@@ -21,7 +21,7 @@ public class SQLQueryImpl implements SQLQuery {
         try {
             this.statement = new NamedParamStatement(connection, sql);
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new TormException(e);
         }
     }
 
@@ -81,7 +81,7 @@ public class SQLQueryImpl implements SQLQuery {
         try {
             CloseExecutorUtil.closeStatement(statement.getPreparedStatement());
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new TormException(e);
         }
     }
 }

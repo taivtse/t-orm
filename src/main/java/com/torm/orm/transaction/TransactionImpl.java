@@ -1,5 +1,7 @@
 package com.torm.orm.transaction;
 
+import com.torm.orm.exception.TormException;
+
 import java.sql.Connection;
 import java.sql.SQLException;
 
@@ -15,7 +17,7 @@ public class TransactionImpl implements Transaction {
         try {
             this.connection.commit();
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new TormException(e);
         }
     }
 
@@ -24,7 +26,7 @@ public class TransactionImpl implements Transaction {
         try {
             this.connection.rollback();
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new TormException(e);
         }
     }
 }

@@ -1,5 +1,6 @@
 package com.torm.orm.query.criteria;
 
+import com.torm.orm.exception.TormException;
 import com.torm.orm.mapper.ArrayMapper;
 import com.torm.orm.mapper.EntityMapper;
 import com.torm.orm.query.criteria.criterion.Criterion;
@@ -65,10 +66,8 @@ public class CriteriaImpl implements Criteria {
                     resultList.add(ArrayMapper.toArray(resultSet));
                 }
             }
-
-            return resultList;
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new TormException(e);
         } finally {
             this.close();
         }
@@ -89,11 +88,11 @@ public class CriteriaImpl implements Criteria {
                 if (isMappedToEntity) {
                     object = EntityMapper.of(entityClass).toEntity(resultSet);
                 } else {
-                    object = ArrayMapper.toArray(resultSet);
+                    object = ArrayMapper.toArray(resultSet)[0];
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new TormException(e);
         } finally {
             this.close();
         }
@@ -176,11 +175,12 @@ public class CriteriaImpl implements Criteria {
         try {
             CloseExecutorUtil.closeStatement(statement.getPreparedStatement());
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new TormException(e);
         }
     }
 
     private String buildSqlQuery() {
+        sqlQuery.setLength(0);
         sqlQuery.append("SELECT ");
         sqlQuery.append(selectColumns.length() == 0 ? "*" : selectColumns);
         sqlQuery.append(" FROM ");

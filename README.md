@@ -136,7 +136,7 @@ try {
 ```
 
 #### Cách sử dụng Criteria Query
-1. Lấy danh sách các User
+##### 1. Lấy danh sách các User
 ```java
 List<UserEntity> userEntityList = new ArrayList<>();
 Session session = this.getSession();
@@ -150,7 +150,7 @@ try {
 }
 ```
 
-2. Lấy 1 User bởi Id
+##### 2. Lấy 1 User bởi Id
 ```java
 UserEntity userEntity = null;
 Session session = this.getSession();
@@ -164,7 +164,7 @@ try {
 }
 ```
 
-3. Đếm số lượng User có trong database
+##### 3. Đếm số lượng User có trong database
 ```java
 Session session = this.getSession();
 Criteria cr = session.createCriteria(UserEntity.class);
@@ -180,7 +180,7 @@ try {
 }
 ```
 
-4. Lấy danh sách User theo điều kiện
+##### 4. Lấy danh sách User theo điều kiện
 Ví dụ câu sql như sau:
 ```mysql
 SELECT * FROM user WHERE (username LIKE '%thanh' OR id BETWEEN 1 AND 3) AND full_name IS NOT NULL
@@ -200,6 +200,11 @@ groupExpression.add(Logical.or("id").between(2, 3));
 criterionList.add(groupExpression);
 criterionList.add(Logical.and("fullName").isNotNull());
 
+// thêm danh sách điều kiện vào câu query
+for (Criterion criterion : criterionList) {
+  criteria.addCriterion(criterion);
+}
+
 try {
   userEntityList = criteria.list();
 } catch (Exception e) {
@@ -209,46 +214,48 @@ try {
 }
 ```
 
-5. Chi lay 1 so thuoc tinh can thiet
-* Doi voi Aggregate Function:
-Vi du cau sql nhu sau: 
+###### Tham khảo thêm các điều kiện trong Class ```java Restrictions```
+
+##### 5. Chỉ lấy 1 số thuộc tính cần thiết:
+* Đối với Aggregate Function:
+Ví dụ câu sql như sau: 
 ```mysql
 SELECT min(id), max(id) FROM user
 ```
-Thi ta chi can them nhu sau truoc khi thuc hien ```java criteria.list()```:
+Thì ta cần thêm như sau trước khi thực hiện ```java criteria.list()```:
 ```java
 criteria.addSelection(Projections.min("id"));
 criteria.addSelection(Projections.max("id"));
 ```
 
-Chú ý: Khi can lay nhung thuoc tinh la Aggregate Function thi ta khong the mapping thanh doi tuong, danh sach tra ve co dang ```java List<Object[]>```
+Chú ý: Khi cần lấy những thuộc tính là Aggregate Function thì kết quả trả về có dạng ```java List<Object[]>```
 
-* Doi voi cac thuoc tinh
-Vi du cau sql nhu sau: 
+* Đối với các thuộc tính của đối tượng
+Ví dụ câu sql:
 ```mysql
 SELECT full_name, role_id FROM user
 ```
-Thi ta chi can them nhu sau truoc khi thuc hien ```java criteria.list()```:
+Java code tương ứng:
 ```java
 criteria.addSelection("fullName");
 criteria.addSelection("roleId");
 ```
-Chu y: Ket qua tra ve van la danh sach cac doi tuong.
+Chú ý: Kết quả trả về là danh sách các đối tượng, những thuộc tính không lấy sẽ là ```java null```.
 
-6. Su dung group by va alias
-Vi du cau sql nhu sau: 
+##### 6. Sử dụng Group by và Alias
+Đối với câu sql như sau:
 ```mysql
 SELECT max(id) AS user_id FROM user GROUP BY role_id
 ```
 
-Thi ta se lam nhu sau:
+Java code tương ứng:
 ```java
 criteria.addSelection(Projections.max("id").as("user_id"));
 criteria.addGroupBy("roleId");
 ```
 
-7. set order va limit 
-Vi du cau sql nhu sau: 
+##### 7. Sử dụng Order By và Limit, Offset
+Ví dụ câu sql:
 ```mysql
 SELECT * FROM user ORDER BY id DESC LIMIT 2 OFFSET 0
 ```
@@ -258,4 +265,128 @@ Trong java code:
 criteria.addOrder(Order.desc("id"));
 criteria.setMaxResults(2);
 criteria.setFirstResult(0);
+```
+
+#### Cách sử dụng SQL Query
+##### 1. Ví dụ 1 câu sql đơn giản như sau:
+```mysql
+SELECT * FROM user WHERE username = 'anhtuan' AND password = '1234'
+```
+
+Ta sẽ làm như sau:
+```java
+Session session = SessionFactory.openSession();
+try {
+  SQLQuery sqlQuery = session.createSQLQuery("SELECT * FROM user WHERE username = {username} AND password = {password}");
+  sqlQuery.setEntity(UserEntity.class);
+  sqlQuery.setParam("username", "anhtuan");
+  sqlQuery.setParam("password", "1234");
+  List<UserEntity> list = sqlQuery.list();
+} catch (SQLException e) {
+  e.printStackTrace();
+} finally {
+  session.close();
+}
+```
+Chú ý: Do dữ liệu lấy về là những thuộc tính của User nên ta thêm ```java sqlQuery.setEntity(UserEntity.class);``` để kết quả trả về là 1 danh sách các User
+
+##### 2. Ví dụ câu sql kết bảng như sau:
+```mysql
+SELECT u.full_name, r.name FROM user u JOIN role r ON u.role_id = r.id WHERE u.id BETWEEN 1 AND 2
+```
+
+Java code tương ứng
+```java
+Session session = SessionFactory.openSession();
+try {
+  SQLQuery sqlQuery = session.createSQLQuery("SELECT u.full_name, r.name FROM user u JOIN role r ON u.role_id = r.id WHERE u.id BETWEEN {lowId} AND {highId}");
+  sqlQuery.setParam("lowId", 1);
+  sqlQuery.setParam("highId", 2);
+  List<Objec[]> list = sqlQuery.list();
+} catch (SQLException e) {
+  e.printStackTrace();
+} finally {
+  session.close();
+}
+```
+Chú ý: đối với trường hợp này, do lấy dữ liệu từ 2 bảng nên không thể trả về 1 danh sách User, thay vào đó sẽ trả về danh sách các mảng đối tượng.
+
+#### Thêm, sửa, xoá đối tượng
+#### Cấu trúc chung:
+```java
+Session session = this.getSession();
+Transaction transaction = session.beginTransaction();
+
+try {
+  // do something
+  transaction.commit();
+} catch (SQLException e) {
+  transaction.rollback();
+  e.printStackTrace();
+} finally {
+  session.close();
+}
+```
+
+##### 1. Thêm mới 1 User
+```java
+UserEntity userEntity = new UserEntity();
+userEntity.setUsername("haimy");
+userEntity.setFullName("Tran Hai My");
+userEntity.setRoleId("USER");
+
+Session session = this.getSession();
+Transaction transaction = session.beginTransaction();
+
+try {
+  session.save(userEntity);
+  transaction.commit();
+} catch (SQLException e) {
+  transaction.rollback();
+  e.printStackTrace();
+} finally {
+  session.close();
+}
+```
+
+##### 2. Cập nhật thông tin 1 User
+```java
+UserEntity userEntity = new UserEntity();
+userEntity.setId(4);
+userEntity.setUsername("haimy");
+userEntity.setFullName("Tran Hai Cau");
+userEntity.setPassword("1->9");
+userEntity.setRoleId("ADMIN");
+
+Session session = this.getSession();
+Transaction transaction = session.beginTransaction();
+
+try {
+  session.update(userEntity);
+  transaction.commit();
+} catch (SQLException e) {
+  transaction.rollback();
+  e.printStackTrace();
+} finally {
+  session.close();
+}
+```
+
+##### 3. Xoá 1 User bởi Id
+```java
+UserEntity userEntity = new UserEntity();
+userEntity.setId(4);
+
+Session session = this.getSession();
+Transaction transaction = session.beginTransaction();
+
+try {
+  session.delete(userEntity);
+  transaction.commit();
+} catch (SQLException e) {
+  transaction.rollback();
+  e.printStackTrace();
+} finally {
+  session.close();
+}
 ```

@@ -62,7 +62,7 @@ public class TestUserDao {
     public void update() {
         UserEntity userEntity = new UserEntity();
         userEntity.setId(4);
-        userEntity.setUsername("haiasdmy");
+        userEntity.setUsername("haimy");
         userEntity.setFullName("Tran Hai Cau");
         userEntity.setPassword("1->9");
         userEntity.setRoleId("ADMIN");

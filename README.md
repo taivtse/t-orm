@@ -187,7 +187,7 @@ try {
 ##### 4. Lấy danh sách User theo điều kiện
 Ví dụ câu sql như sau:
 ```mysql
-SELECT * FROM user WHERE (username LIKE '%thanh' OR id BETWEEN 1 AND 3) AND full_name IS NOT NULL
+SELECT * FROM user WHERE (username like 'thanh%' OR id BETWEEN 2 AND 3) AND full_name IS NOT NULL
 ```
 
 Java code tương ứng:

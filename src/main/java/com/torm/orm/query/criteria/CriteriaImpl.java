@@ -25,7 +25,7 @@ public class CriteriaImpl implements Criteria {
 
     private StringBuilder sqlQuery = new StringBuilder();
     private StringBuilder selectColumns = new StringBuilder();
-    private String tableName = "";
+    private String tableName;
     private StringBuilder where = new StringBuilder();
     private StringBuilder groupBy = new StringBuilder();
     private StringBuilder having = new StringBuilder();
@@ -55,7 +55,7 @@ public class CriteriaImpl implements Criteria {
     @Override
     public List list() {
         ResultSet resultSet;
-        List resultList = new ArrayList<>();
+        List<Object> resultList = new ArrayList<>();
         try {
             resultSet = this.executeQuery();
             while (resultSet.next()) {

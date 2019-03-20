@@ -1,6 +1,7 @@
-import com.torm.orm.query.sqlquery.SqlQuery;
+import com.torm.orm.query.sqlquery.SQLQuery;
 import com.torm.orm.session.Session;
 import com.torm.orm.session.SessionFactory;
+import com.torm.sample.entity.RoleEntity;
 import org.testng.annotations.Test;
 
 import java.sql.SQLException;
@@ -10,14 +11,16 @@ public class TestSqlQuery {
     @Test
     public void test() {
         Session session = SessionFactory.openSession();
-        List list;
         try {
-            SqlQuery sqlQuery = session.createSQLQuery("SELECT * FROM role WHERE id = {id}");
-            sqlQuery.setParameter("id", "ADMIN");
-            list = sqlQuery.list();
+            assert session != null;
+            SQLQuery sqlQuery = session.createSQLQuery("SELECT * FROM role WHERE id = {id}");
+            sqlQuery.setEntity(RoleEntity.class);
+            sqlQuery.setParam("id", "ADMIN");
+            List list = sqlQuery.list();
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
+            assert session != null;
             session.close();
         }
     }

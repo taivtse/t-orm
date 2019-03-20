@@ -10,7 +10,7 @@ import java.sql.SQLException;
 public class EntityMapperImpl implements EntityMapper {
     private Class<?> entityClass;
 
-    public void setEntityClass(Class<?> entityClass) {
+    void setEntityClass(Class<?> entityClass) {
         this.entityClass = entityClass;
     }
 

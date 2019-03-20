@@ -36,7 +36,7 @@ public class UserDao {
         try {
 //        set properties search
             if (criterionList != null) {
-                criterionList.forEach(criterion -> criteria.addCriterion(criterion));
+                criterionList.forEach(criteria::addCriterion);
             }
             userEntityList = criteria.list();
         } catch (Exception e) {
@@ -53,7 +53,7 @@ public class UserDao {
         UserEntity userEntity = null;
 
         try {
-            userEntity = session.get(UserEntity.class, id);
+            userEntity = (UserEntity) session.get(UserEntity.class, id);
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -80,7 +80,7 @@ public class UserDao {
         return rowCount;
     }
 
-    public UserEntity save(UserEntity entity) throws SQLException {
+    public void save(UserEntity entity) throws SQLException {
         Session session = this.getSession();
         Transaction transaction = session.beginTransaction();
 
@@ -94,10 +94,9 @@ public class UserDao {
             session.close();
         }
 
-        return entity;
     }
 
-    public UserEntity update(UserEntity entity) throws SQLException {
+    public void update(UserEntity entity) throws SQLException {
         Session session = this.getSession();
         Transaction transaction = session.beginTransaction();
 
@@ -110,8 +109,6 @@ public class UserDao {
         } finally {
             session.close();
         }
-
-        return entity;
     }
 
     public void delete(UserEntity entity) throws SQLException {

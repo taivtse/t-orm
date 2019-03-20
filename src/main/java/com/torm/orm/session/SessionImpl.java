@@ -5,8 +5,8 @@ import com.torm.orm.exception.IdentifierGenerationException;
 import com.torm.orm.query.criteria.Criteria;
 import com.torm.orm.query.criteria.CriteriaImpl;
 import com.torm.orm.query.criteria.criterion.Logical;
-import com.torm.orm.query.sqlquery.SqlQuery;
-import com.torm.orm.query.sqlquery.SqlQueryImpl;
+import com.torm.orm.query.sqlquery.SQLQuery;
+import com.torm.orm.query.sqlquery.SQLQueryImpl;
 import com.torm.orm.query.statement.NamedParamStatement;
 import com.torm.orm.session.util.CloseExecutorUtil;
 import com.torm.orm.transaction.Transaction;
@@ -21,9 +21,9 @@ import java.sql.SQLException;
 
 public class SessionImpl implements Session {
     private Connection connection;
-    NamedParamStatement statement;
+    private NamedParamStatement statement;
 
-    public SessionImpl(Connection connection) {
+    SessionImpl(Connection connection) {
         this.connection = connection;
     }
 
@@ -108,8 +108,8 @@ public class SessionImpl implements Session {
     }
 
     @Override
-    public SqlQuery createSQLQuery(String sql) {
-        return new SqlQueryImpl(connection, sql);
+    public SQLQuery createSQLQuery(String sql) {
+        return new SQLQueryImpl(connection, sql);
     }
 
     @Override

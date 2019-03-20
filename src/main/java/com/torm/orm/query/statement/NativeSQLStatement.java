@@ -5,15 +5,14 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class NativeSQLStatement {
-    protected PreparedStatement preparedStatement;
+    PreparedStatement preparedStatement;
 
-    public NativeSQLStatement() {
+    NativeSQLStatement() {
     }
 
     public ResultSet executeQuery() throws SQLException {
         System.out.println(preparedStatement);
-        ResultSet resultSet = this.preparedStatement.executeQuery();
-        return resultSet;
+        return this.preparedStatement.executeQuery();
     }
 
     public Integer executeUpdate() throws SQLException {

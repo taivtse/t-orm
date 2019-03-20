@@ -93,7 +93,6 @@ public class UserDao {
         } finally {
             session.close();
         }
-
     }
 
     public void update(UserEntity entity) throws SQLException {

@@ -19,7 +19,7 @@
 * Hoạt động tốt với MySql
 
 ### Các bước cấu hình:
-1. Tạo file torm.properties trong thư mục resource của project
+1. Tạo file torm.properties trong thư mục resource của project.
 2. Thêm các thuộc tính để kết nối với database, ví dụ:
 ```properties
 db.driver=com.mysql.cj.jdbc.Driver
@@ -27,7 +27,8 @@ db.url=jdbc:mysql://localhost:3306/torm?autoReconnect=true&useSSL=false
 db.username=root
 db.password=123456789
 ```
-Hoàn tất và sử dụng.
+3. Mapping các đối tượng với các bảng.
+4. Hoàn tất.
 
 ### Demo code:
 #### 1. Tạo database đơn giản với cấu trúc như sau:
@@ -59,6 +60,9 @@ INSERT INTO `user` VALUES (1, 'thanhtai', 'Vo Thanh Tai', '12345', 'ADMIN');
 INSERT INTO `user` VALUES (2, 'thanhcong', NULL, NULL, 'USER');
 INSERT INTO `user` VALUES (3, 'anhtuan', 'Bui Anh Tuan', '1234', 'USER');
 ```
+
+#### 3. Tạo file torm.properties
+
 
 #### 3. Mapping các đối tượng với các bảng:
 ##### RoleEntity

@@ -222,14 +222,14 @@ SELECT * FROM user WHERE username = 'anhtuan' AND password = '1234'
 
 Java code tương ứng:
 ```java
-List<UserEntity> userEntityList = new ArrayList<>();
+UserEntity userEntity = null;
 Session session = this.getSession();
 Criteria cr = session.createCriteria(UserEntity.class);
 criteria.addCriterion(Logical.and("username").eq("anhtuan"));
 criteria.addCriterion(Logical.and("password").eq("1234"));
 
 try {
-  userEntityList = criteria.list();
+  userEntity = (UserEntity) criteria.uniqueResult();
 } catch (Exception e) {
     e.printStackTrace();
 } finally {

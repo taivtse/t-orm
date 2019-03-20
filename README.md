@@ -1,6 +1,6 @@
 ## Torm là một thư viện ORM hỗ trợ thao tác dữ liệu thông qua đối tượng.
 
-## Được xây dựng dựa trên Hibernate 4.x - Hoạt động với MySQL.
+## Được xây dựng dựa trên Hibernate 4.x - Hoạt động tốt với MySQL.
 
 ### Thư viện được phát triển thêm từ private project quản lý bất động sản.
 
@@ -9,7 +9,7 @@
 * Hỗ trợ SQLQuery đối với những câu truy vấn phức tạp.
 * Có thể đặt tên cho các tham số trong câu truy vấn.
 * Thao tác thêm, sửa, xoá 1 đối tượng.
-* Tải lại dữ liệu của đối tượng sau khi save hoặc update để lấy dữ liệu của các trường do trigger sinh ra.
+* Tự động tải lại dữ liệu của đối tượng sau khi save hoặc update để lấy dữ liệu của các trường do trigger sinh ra.
 
 ### Một số hạn chế ở version 1.0.1:
 * Criteria chỉ truy vấn được trên 1 đối tượng.

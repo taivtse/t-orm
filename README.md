@@ -122,4 +122,4 @@ public class UserEntity {
 * Tạo getter và setter tương ứng
 
 ### Example code:
-#### Cấu trúc chung khi 
+#### Cấu trúc chung khi thực hiện truy vấn:

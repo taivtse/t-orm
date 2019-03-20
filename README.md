@@ -186,7 +186,7 @@ Ví dụ câu sql như sau:
 SELECT * FROM user WHERE (username LIKE '%thanh' OR id BETWEEN 1 AND 3) AND full_name IS NOT NULL
 ```
 
-Thì trong java code:
+Java code tương ứng:
 ```java
 List<UserEntity> userEntityList = new ArrayList<>();
 Session session = this.getSession();
@@ -214,21 +214,44 @@ try {
 }
 ```
 
-###### Tham khảo thêm các điều kiện trong Class ```java Restrictions```
+##### 5. Lấy 1 User theo điều kiện
+Ví dụ câu sql như sau:
+```mysql
+SELECT * FROM user WHERE username = 'anhtuan' AND password = '1234'
+```
 
-##### 5. Chỉ lấy 1 số thuộc tính cần thiết:
+Java code tương ứng:
+```java
+List<UserEntity> userEntityList = new ArrayList<>();
+Session session = this.getSession();
+Criteria cr = session.createCriteria(UserEntity.class);
+criteria.addCriterion(Logical.and("username").eq("anhtuan"));
+criteria.addCriterion(Logical.and("password").eq("1234"));
+
+try {
+  userEntityList = criteria.list();
+} catch (Exception e) {
+    e.printStackTrace();
+} finally {
+    session.close();
+}
+```
+
+###### Tham khảo thêm các điều kiện trong Class ```Restrictions```
+
+##### 6. Chỉ lấy 1 số thuộc tính cần thiết:
 * Đối với Aggregate Function:
 Ví dụ câu sql như sau: 
 ```mysql
 SELECT min(id), max(id) FROM user
 ```
-Thì ta cần thêm như sau trước khi thực hiện ```java criteria.list()```:
+Thì ta cần thêm như sau trước khi thực hiện ```criteria.list()```:
 ```java
 criteria.addSelection(Projections.min("id"));
 criteria.addSelection(Projections.max("id"));
 ```
 
-Chú ý: Khi cần lấy những thuộc tính là Aggregate Function thì kết quả trả về có dạng ```java List<Object[]>```
+Chú ý: Khi cần lấy những thuộc tính là Aggregate Function thì kết quả trả về có dạng ```List<Object[]>```
 
 * Đối với các thuộc tính của đối tượng
 Ví dụ câu sql:
@@ -240,9 +263,9 @@ Java code tương ứng:
 criteria.addSelection("fullName");
 criteria.addSelection("roleId");
 ```
-Chú ý: Kết quả trả về là danh sách các đối tượng, những thuộc tính không lấy sẽ là ```java null```.
+Chú ý: Kết quả trả về là danh sách các đối tượng, những thuộc tính không lấy sẽ là ```null```.
 
-##### 6. Sử dụng Group by và Alias
+##### 7. Sử dụng Group by và Alias
 Đối với câu sql như sau:
 ```mysql
 SELECT max(id) AS user_id FROM user GROUP BY role_id
@@ -254,13 +277,13 @@ criteria.addSelection(Projections.max("id").as("user_id"));
 criteria.addGroupBy("roleId");
 ```
 
-##### 7. Sử dụng Order By và Limit, Offset
+##### 8. Sử dụng Order By và Limit, Offset
 Ví dụ câu sql:
 ```mysql
 SELECT * FROM user ORDER BY id DESC LIMIT 2 OFFSET 0
 ```
 
-Trong java code:
+Java code tương ứng:
 ```java
 criteria.addOrder(Order.desc("id"));
 criteria.setMaxResults(2);
@@ -273,7 +296,7 @@ criteria.setFirstResult(0);
 SELECT * FROM user WHERE username = 'anhtuan' AND password = '1234'
 ```
 
-Ta sẽ làm như sau:
+Java code tương ứng:
 ```java
 Session session = SessionFactory.openSession();
 try {
@@ -288,14 +311,14 @@ try {
   session.close();
 }
 ```
-Chú ý: Do dữ liệu lấy về là những thuộc tính của User nên ta thêm ```java sqlQuery.setEntity(UserEntity.class);``` để kết quả trả về là 1 danh sách các User
+Chú ý: Do dữ liệu lấy về là những thuộc tính của User nên ta thêm ```sqlQuery.setEntity(UserEntity.class);``` để kết quả trả về là 1 danh sách các User
 
 ##### 2. Ví dụ câu sql kết bảng như sau:
 ```mysql
 SELECT u.full_name, r.name FROM user u JOIN role r ON u.role_id = r.id WHERE u.id BETWEEN 1 AND 2
 ```
 
-Java code tương ứng
+Java code tương ứng:
 ```java
 Session session = SessionFactory.openSession();
 try {

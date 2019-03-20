@@ -21,7 +21,7 @@
 * Hoạt động tốt với MySql
 
 ### Các bước cấu hình:
-1. Tạo file torm.properties trong thư mục resource của project.
+1. Tạo file torm.properties trong thư mục resources của project.
 2. Thêm các thuộc tính để kết nối với database, ví dụ:
 ```properties
 db.driver=com.mysql.cj.jdbc.Driver

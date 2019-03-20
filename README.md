@@ -35,6 +35,8 @@ db.password=123456789
 ### Demo code:
 #### 1. Tạo database đơn giản với cấu trúc như sau:
 ```mysql
+CREATE DATABASE torm;
+
 CREATE TABLE `role` (
   `id` varchar(255) NOT NULL,
   `name` varchar(255) DEFAULT NULL,

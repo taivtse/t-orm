@@ -9,10 +9,9 @@ import java.util.List;
 
 public class TestSqlQuery {
     @Test
-    public void test() {
+    public void list() {
         Session session = SessionFactory.openSession();
         try {
-            assert session != null;
             SQLQuery sqlQuery = session.createSQLQuery("SELECT * FROM role WHERE id = {id}");
             sqlQuery.setEntity(RoleEntity.class);
             sqlQuery.setParam("id", "ADMIN");
@@ -20,7 +19,6 @@ public class TestSqlQuery {
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-            assert session != null;
             session.close();
         }
     }

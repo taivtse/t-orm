@@ -12,7 +12,7 @@ import java.util.List;
 
 public class TestUserDao {
 
-    UserDao userDao = new UserDao();
+    private UserDao userDao = new UserDao();
 
     @Test
     public void findAll() {

@@ -123,3 +123,139 @@ public class UserEntity {
 
 ### Example code:
 #### Cấu trúc chung khi thực hiện truy vấn:
+```java
+Session session = this.getSession();
+
+try {
+  // do something
+} catch (Exception e) {
+    e.printStackTrace();
+} finally {
+    session.close();
+}
+```
+
+#### Cách sử dụng Criteria Query
+1. Lấy danh sách các User
+```java
+List<UserEntity> userEntityList = new ArrayList<>();
+Session session = this.getSession();
+
+try {
+  userEntityList = session.createCriteria(UserEntity.class).list();
+} catch (Exception e) {
+    e.printStackTrace();
+} finally {
+    session.close();
+}
+```
+
+2. Lấy 1 User bởi Id
+```java
+UserEntity userEntity = null;
+Session session = this.getSession();
+
+try {
+  userEntity = (UserEntity) session.get(UserEntity.class, id);
+} catch (Exception e) {
+    e.printStackTrace();
+} finally {
+    session.close();
+}
+```
+
+3. Đếm số lượng User có trong database
+```java
+Session session = this.getSession();
+Criteria cr = session.createCriteria(UserEntity.class);
+Long rowCount = 0L;
+
+try {
+  cr.addSelection(Projections.rowCount());
+  rowCount = (Long) cr.uniqueResult();
+} catch (Exception e) {
+    e.printStackTrace();
+} finally {
+    session.close();
+}
+```
+
+4. Lấy danh sách User theo điều kiện
+Ví dụ câu sql như sau:
+```mysql
+SELECT * FROM user WHERE (username LIKE '%thanh' OR id BETWEEN 1 AND 3) AND full_name IS NOT NULL
+```
+
+Thì trong java code:
+```java
+List<UserEntity> userEntityList = new ArrayList<>();
+Session session = this.getSession();
+Criteria cr = session.createCriteria(UserEntity.class);
+
+List<Criterion> criterionList = new ArrayList<>();
+
+GroupExpression groupExpression = Logical.andGroup();
+groupExpression.add(Logical.and("username").like("thanh", MatchMode.START));
+groupExpression.add(Logical.or("id").between(2, 3));
+criterionList.add(groupExpression);
+criterionList.add(Logical.and("fullName").isNotNull());
+
+try {
+  userEntityList = criteria.list();
+} catch (Exception e) {
+    e.printStackTrace();
+} finally {
+    session.close();
+}
+```
+
+5. Chi lay 1 so thuoc tinh can thiet
+* Doi voi Aggregate Function:
+Vi du cau sql nhu sau: 
+```mysql
+SELECT min(id), max(id) FROM user
+```
+Thi ta chi can them nhu sau truoc khi thuc hien ```java criteria.list()```:
+```java
+criteria.addSelection(Projections.min("id"));
+criteria.addSelection(Projections.max("id"));
+```
+
+Chú ý: Khi can lay nhung thuoc tinh la Aggregate Function thi ta khong the mapping thanh doi tuong, danh sach tra ve co dang ```java List<Object[]>```
+
+* Doi voi cac thuoc tinh
+Vi du cau sql nhu sau: 
+```mysql
+SELECT full_name, role_id FROM user
+```
+Thi ta chi can them nhu sau truoc khi thuc hien ```java criteria.list()```:
+```java
+criteria.addSelection("fullName");
+criteria.addSelection("roleId");
+```
+Chu y: Ket qua tra ve van la danh sach cac doi tuong.
+
+6. Su dung group by va alias
+Vi du cau sql nhu sau: 
+```mysql
+SELECT max(id) AS user_id FROM user GROUP BY role_id
+```
+
+Thi ta se lam nhu sau:
+```java
+criteria.addSelection(Projections.max("id").as("user_id"));
+criteria.addGroupBy("roleId");
+```
+
+7. set order va limit 
+Vi du cau sql nhu sau: 
+```mysql
+SELECT * FROM user ORDER BY id DESC LIMIT 2 OFFSET 0
+```
+
+Trong java code:
+```java
+criteria.addOrder(Order.desc("id"));
+criteria.setMaxResults(2);
+criteria.setFirstResult(0);
+```

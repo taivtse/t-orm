@@ -61,7 +61,7 @@ public class TestUserDao {
     @Test
     public void update() {
         UserEntity userEntity = new UserEntity();
-        userEntity.setId(4);
+        userEntity.setId(101);
         userEntity.setUsername("haimy");
         userEntity.setFullName("Tran Hai Cau");
         userEntity.setPassword("1->9");
@@ -77,7 +77,7 @@ public class TestUserDao {
     @Test
     public void delete() {
         UserEntity userEntity = new UserEntity();
-        userEntity.setId(4);
+        userEntity.setId(101);
 
         try {
             userDao.delete(userEntity);

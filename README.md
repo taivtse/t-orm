@@ -62,9 +62,17 @@ INSERT INTO `user` VALUES (3, 'anhtuan', 'Bui Anh Tuan', '1234', 'USER');
 ```
 
 #### 3. Tạo file torm.properties
+```properties
+db.driver=com.mysql.cj.jdbc.Driver
+db.url=jdbc:mysql://localhost:3306/torm?autoReconnect=true&useSSL=false
+db.username=root
+db.password=123456789
+```
+Lưu ý:
+* Thay đổi tên database, tài khoản và mật khẩu tương ứng. 
+* Sử dụng driver: ```com.mysql.jdbc.Driver``` với MySql < 8.x
 
-
-#### 3. Mapping các đối tượng với các bảng:
+#### 4. Mapping các đối tượng với các bảng:
 ##### RoleEntity
 ```java
 @Entity(tableName = "role")
@@ -105,3 +113,13 @@ public class UserEntity {
     // getter and setter
 }
 ```
+
+##### Cách map:
+* Dùng ```@Entity``` với thuộc tính ```tableName``` để chỉ định tên bảng trong database.
+* Đặt ```@Column``` với thuộc tính ```name``` để chỉ định tên cột trong database.
+* Đối khoá chính: đặt ```@Id``` với thuộc tính ```autoIncrement``` để chỉ định đó là khoá chính và có tự tăng hay không.
+* Đặt ```@IdField``` lên trên class và ```name``` phải trùng với tên của thuộc tính khoá chính trong đối tượng;
+* Tạo getter và setter tương ứng
+
+### Example code:
+#### Cấu trúc chung khi 

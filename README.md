@@ -2,7 +2,7 @@
 
 ## Được xây dựng dựa trên Hibernate 4.x - Hoạt động tốt với MySQL.
 
-### Thư viện được phát triển thêm từ private project quản lý bất động sản.
+### Thư viện được phát triển thêm từ project quản lý bất động sản.
 
 ### Các chức năng:
 * Hỗ trợ câu lệnh Criteria dùng để build câu truy vấn trên đối tượng.
